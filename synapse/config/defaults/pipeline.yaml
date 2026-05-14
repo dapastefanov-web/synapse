@@ -1,0 +1,55 @@
+# pipeline.yaml — LangGraph routing definitions for each execution stack.
+#
+# The Python graph builders in synapse/graphs/ read this file at startup and
+# translate these entries into graph.add_edge() and graph.add_conditional_edges()
+# calls. Rewiring the pipeline — adding a Security Auditor node before the
+# Summariser, for example — only requires changes here, not in Python.
+
+stacks:
+
+  fast:
+    entry_point: coder_fast
+    edges:
+      coder_fast:
+        default: summariser
+      summariser:
+        default: END
+
+  balanced:
+    entry_point: architect_balanced
+    edges:
+      architect_balanced:
+        default: coder_balanced
+      coder_balanced:
+        default: debugger_static
+      debugger_static:
+        on_pass: summariser
+        on_fail: coder_balanced   # routes back for self-correction on FAIL verdict
+        max_retries: 3            # hard limit on balanced static review cycles
+      summariser:
+        default: END
+
+  autonomous:
+    entry_point: architect_autonomous
+    edges:
+      architect_autonomous:
+        default: parallel_dispatch   # triggers the Send() map-reduce fan-out
+      parallel_dispatch:
+        default: merge_node          # all parallel branches converge here
+      merge_node:
+        on_conflict: conflict_resolver
+        on_clean: summariser
+      conflict_resolver:
+        default: summariser
+      summariser:
+        default: END
+    # Configuration for the subgraph running inside each parallel branch
+    subgraph:
+      entry_point: coder_autonomous
+      edges:
+        coder_autonomous:
+          default: debugger_autonomous
+        debugger_autonomous:
+          on_pass: END
+          on_fail: coder_autonomous
+          max_iterations: 5          # hard abort — prevents runaway API billing

@@ -1,0 +1,36 @@
+# cli_config.yaml — Terminal aliases and prompt macros.
+#
+# Aliases map shorthand commands to their full equivalents and are resolved
+# by the lexer before any other processing. Macros map @ tokens to expanded
+# system directive prefixes that are prepended to the user's instruction
+# before it reaches the active agent.
+
+aliases:
+  "/init": "/init-docker"
+  "/s": "/stack"
+  "/a": "/access"
+  "/rs": "/resume"
+
+macros:
+  "@arch": |
+    System Directive: You are operating under Architect mode constraints.
+    Prioritise clean separation of concerns and established architectural patterns.
+    Analyse the following request thoroughly before producing your plan:
+
+  "@test": |
+    System Directive: Your primary objective is comprehensive test coverage.
+    Write tests using the project's existing test framework with high branch and line coverage.
+    Ensure all edge cases and error paths are covered for the following:
+
+  "@refactor": |
+    System Directive: You are performing a targeted refactor, not a rewrite.
+    Preserve all existing public interfaces and observable behaviour.
+    Improve internal structure, readability, and performance for the following:
+
+  "@debug": |
+    System Directive: Perform deep root-cause analysis.
+    Trace the full execution path and identify the precise source of the failure in:
+
+  "@doc": |
+    System Directive: Generate comprehensive developer documentation.
+    Include usage examples, parameter descriptions, and return value explanations for:

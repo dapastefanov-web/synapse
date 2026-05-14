@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=72.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "synapse-ai-cli"
+version = "1.0.0"
+description = "A terminal-native, configuration-driven multi-agent AI engineering swarm."
+readme = "README.md"
+requires-python = ">=3.12"
+license = { file = "LICENSE" }
+dependencies = [
+    "litellm>=1.40.0",
+    "langgraph>=0.2.0",
+    "langchain-core>=0.3.0",
+    "pydantic>=2.7.0",
+    "typer>=0.12.0",
+    "rich>=13.9.0",
+    "sqlite-vec>=0.1.6",
+    "docker>=7.1.0",
+    "httpx>=0.27.0",
+    "aiohttp>=3.9.0",
+    "tenacity>=8.3.0",
+    "pyyaml>=6.0.1",
+    "firecrawl-py>=1.1.0",
+    "python-dotenv>=1.0.0",
+]
+
+# After `pip install -e .`, typing `synapse` in any terminal calls synapse/main.py -> app()
+[project.scripts]
+synapse = "synapse.main:app"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["synapse*"]
