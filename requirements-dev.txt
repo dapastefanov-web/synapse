@@ -1,0 +1,13 @@
+# --- Testing Framework and Async Support ---
+pytest>=8.2.0           # Core test runner 
+pytest-asyncio>=0.23.0  # Required for testing async LangGraph nodes and LiteLLM calls 
+pytest-rich>=0.1.7      # Displays rich diffs on assertion failures in the terminal 
+pytest-cov>=5.0.0       # Generates code coverage reports to track test depth 
+
+# --- Mocking and Integration ---
+pytest-mock>=3.14.0     # Essential for mocking external API responses (LiteLLM) and Docker SDK calls
+pexpect>=4.9.0          # CRITICAL: For E2E testing of the interactive CLI (typing into the terminal)
+
+# --- Code Quality and Static Analysis ---
+ruff>=0.4.0             # High-performance linter and formatter for the codebase
+mypy>=1.10.0            # Static type checking to validate Pydantic models and orchestrator logic
