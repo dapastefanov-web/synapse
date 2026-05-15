@@ -1,2 +1,3 @@
-/.venv
-/synapse_ai_cli.egg-info
+/.venv/
+/synapse_ai_cli.egg-info/
+/synapse/__pycache__/
