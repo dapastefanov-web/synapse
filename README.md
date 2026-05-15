@@ -40,8 +40,8 @@ Standard AI coding assistants act as intelligent autocomplete or passive chatbot
 ### Standard Installation (Source)
 
 ```bash
-git clone https://github.com/yourusername/synapse-v2.git
-cd synapse-v2
+git clone https://github.com/yourusername/synapse.git
+cd synapse
 pip install -e .
 
 ```
