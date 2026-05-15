@@ -18,6 +18,7 @@ import asyncio
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
+from firecrawl import FirecrawlApp
 
 
 @dataclass
@@ -285,8 +286,6 @@ class NativeToolkit:
             }
 
         try:
-            from firecrawl import FirecrawlApp
-
             def _search() -> Any:
                 app = FirecrawlApp(api_key=self._ctx.firecrawl_api_key)
                 return app.search(query, limit=5)

@@ -19,6 +19,7 @@ from typing_extensions import TypedDict
 
 from pydantic import BaseModel, ConfigDict, Field
 from langgraph.graph.message import add_messages
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 # ---------------------------------------------------------------------------
@@ -112,7 +113,6 @@ class SubTask(BaseModel):
         description="The Debugger's most recent error analysis, populated on FAIL"
     )
 
-
 class ArchitectOutput(BaseModel):
     """
     The Architect's complete response. Requiring a 'rationale' field before
@@ -122,13 +122,29 @@ class ArchitectOutput(BaseModel):
     """
     model_config = ConfigDict(strict=True)
 
-    rationale: str = Field(
-        description="Step-by-step reasoning used to decompose the prompt into tasks"
-    )
-    tasks: list[SubTask] = Field(
-        description="Ordered list of isolated, non-overlapping tasks for parallel execution"
-    )
+    rationale: str = Field(...)
+    tasks: list[SubTask] = Field(min_length=1, description="Ordered list of isolated, non-overlapping tasks for parallel execution")
 
+    @field_validator("tasks")
+    @classmethod
+    def tasks_must_not_be_empty(cls, v):
+        if not v:
+            raise ValueError("Architect must produce at least one task")
+        return v
+# class ArchitectOutput(BaseModel):
+#     tasks: list[SubTask] = Field(
+#         min_length=1,
+#         description="Ordered list of isolated, non-overlapping tasks for parallel execution"
+#     )
+
+#     model_config = ConfigDict(strict=True)
+
+#     rationale: str = Field(
+#         description="Step-by-step reasoning used to decompose the prompt into tasks"
+#     )
+#     tasks: list[SubTask] = Field(
+#         description="Ordered list of isolated, non-overlapping tasks for parallel execution"
+#     )
 
 class CoderOutput(BaseModel):
     """
@@ -137,12 +153,33 @@ class CoderOutput(BaseModel):
     """
     model_config = ConfigDict(strict=True)
 
-    patches: list[FilePatch] = Field(
-        description="One FilePatch per file modified during this task"
-    )
-    notes: str = Field(
-        description="Brief implementation notes for the Debugger to read as context"
-    )
+    patches: list[FilePatch] = Field(min_length=1, description="One FilePatch per file modified during this task")
+    notes: str = Field(...)
+
+    @field_validator("patches")
+    @classmethod
+    def patches_must_not_be_empty(cls, v):
+        if not v:
+            raise ValueError("Coder must produce at least one patch")
+        return v
+# class CoderOutput(BaseModel):
+#     """
+#     What the Coder must return — a list of structured patches and nothing else.
+#     Raw Markdown blocks are explicitly prohibited by the agent's system prompt.
+#     """
+#     patches: list[FilePatch] = Field(
+#         min_length=1,
+#         description="One FilePatch per file modified during this task"
+#     )
+
+#     model_config = ConfigDict(strict=True)
+
+#     patches: list[FilePatch] = Field(
+#         description="One FilePatch per file modified during this task"
+#     )
+#     notes: str = Field(
+#         description="Brief implementation notes for the Debugger to read as context"
+#     )
 
 
 class DebuggerAnalysis(BaseModel):
@@ -222,6 +259,10 @@ class GlobalState(TypedDict):
     # Unique identifier for this session, used for SQLite checkpoint persistence
     session_id: str
 
+    # "PASS" or "FAIL", set by debugger_node
+    debugger_verdict:    str | None
+    # counts Coder→Debugger cycles in balanced stack
+    debugger_iterations: int
 
 # ---------------------------------------------------------------------------
 # SubTaskState — the isolated state for each parallel branch.

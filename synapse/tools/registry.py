@@ -68,9 +68,12 @@ def _python_type_to_json_schema(python_type: Any) -> dict[str, Any]:
         return _python_type_to_json_schema(non_none[0]) if len(non_none) == 1 else {}
 
     # list / List[X]
-    if origin is list:
+    if origin is list or python_type is list:
         item_schema = _python_type_to_json_schema(args[0]) if args else {}
         return {"type": "array", "items": item_schema}
+    # if origin is list:
+    #     item_schema = _python_type_to_json_schema(args[0]) if args else {}
+    #     return {"type": "array", "items": item_schema}
 
     # dict / Dict[K, V]
     if origin is dict or python_type is dict:
@@ -111,7 +114,9 @@ def _parse_docstring_args(docstring: str) -> dict[str, str]:
             continue
 
         # A new top-level header ends the Args section
-        if in_args_section and stripped.endswith(":") and not line.startswith("    "):
+        _DOCSTRING_SECTIONS = {"Returns:", "Raises:", "Yields:", "Note:", "Notes:", "Example:", "Examples:"}
+
+        if in_args_section and stripped in _DOCSTRING_SECTIONS:
             in_args_section = False
             continue
 

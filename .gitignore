@@ -1,4 +1,4 @@
 /.venv/
 /synapse_ai_cli.egg-info/
-/synapse/__pycache__/
+__pycache__/
 /.envrc

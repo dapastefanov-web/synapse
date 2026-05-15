@@ -514,39 +514,22 @@ class TestMCPClientProtocol:
     This lets us verify the exact sequence of messages Synapse sends and receives.
     """
 
-    def _make_start_responses(self, tools: list[dict] | None = None) -> list[dict]:
-        """
-        Build the two JSON-RPC responses that the mock process must return
-        during client.start(): first the initialize response (id=1), then
-        the tools/list response (id=2).
-        """
-        return [
-            {  # id=1: initialize response
-                "jsonrpc": "2.0",
-                "id":      1,
-                "result":  {
-                    "protocolVersion": "2024-11-05",
-                    "capabilities":    {},
-                    "serverInfo":      {"name": "mock-server", "version": "1.0"},
+def _make_start_responses(self, tools=None) -> list[dict]:
+    if tools is None:
+        tools = [
+            {
+                "name":        "test_tool",
+                "description": "A test tool",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {"param": {"type": "string"}},
                 },
-            },
-            {  # id=2: tools/list response
-                "jsonrpc": "2.0",
-                "id":      2,
-                "result":  {
-                    "tools": tools or [
-                        {
-                            "name":        "test_tool",
-                            "description": "A test tool",
-                            "inputSchema": {
-                                "type":       "object",
-                                "properties": {"param": {"type": "string"}},
-                            },
-                        }
-                    ]
-                },
-            },
+            }
         ]
+    return [
+        {"jsonrpc": "2.0", "id": 1, "result": {"protocolVersion": "2024-11-05", "capabilities": {}, "serverInfo": {"name": "mock-server"}}},
+        {"jsonrpc": "2.0", "id": 2, "result": {"tools": tools}},
+    ]
 
     async def test_start_populates_tool_schemas(self, mocker):
         mock_process = make_mock_process(self._make_start_responses())
@@ -572,7 +555,7 @@ class TestMCPClientProtocol:
         await client.start()
         assert client.tool_schemas == []
         await client.stop()
-
+        
     async def test_call_tool_sends_correct_rpc_message(self, mocker):
         # Responses: init, tools/list, then the tool call response (id=3)
         call_response = {
