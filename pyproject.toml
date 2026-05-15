@@ -33,3 +33,6 @@ synapse = "synapse.main:app"
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["synapse*"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
