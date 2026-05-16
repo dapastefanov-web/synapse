@@ -128,6 +128,12 @@ class TestFastGraphStructure:
         fast_apl(state)
         assert state["scratchpad"] == "existing"
 
+    def test_builds_with_real_db_path(self, tmp_path):
+        reg   = _make_registry(tmp_path)
+        db    = str(tmp_path / "test.db")
+        graph = build_fast_graph(reg, db_path=db)
+        assert graph is not None
+
 
 # ═══════════════════════════════════════════════════════════════════════════
 # SECTION 2 — graphs/balanced_stack.py
@@ -149,6 +155,12 @@ class TestBalancedGraphStructure:
         assert "debugger"      in nodes
         assert "summariser"    in nodes
         assert "apply_patches" in nodes
+
+    def test_builds_with_real_db_path(self, tmp_path):
+        reg   = _make_registry(tmp_path)
+        db    = str(tmp_path / "test.db")
+        graph = build_balanced_graph(reg, db_path=db)
+        assert graph is not None
 
 
 class TestBalancedRoutingLogic:
@@ -215,6 +227,12 @@ class TestAutonomousGraphStructure:
         assert "merge_node"         in nodes
         assert "summariser"         in nodes
         assert "apply_patches"      in nodes
+
+    def test_builds_with_real_db_path(self, tmp_path):
+        reg   = _make_registry(tmp_path)
+        db    = str(tmp_path / "test.db")
+        graph = build_autonomous_graph(reg, db_path=db)
+        assert graph is not None
 
 
 class TestSubgraphRoutingLogic:
