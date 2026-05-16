@@ -156,10 +156,8 @@ def build_balanced_graph(
     if db_path == ":memory:":
         checkpointer = MemorySaver()
     else:
-        from langgraph.checkpoint.sqlite import SqliteSaver
-        import sqlite3
-        conn = sqlite3.connect(db_path, check_same_thread=False)
-        checkpointer = SqliteSaver(conn)
+        from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
+        checkpointer = AsyncSqliteSaver.from_conn_string(db_path)
 
     return builder.compile(
         checkpointer=checkpointer,

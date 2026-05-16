@@ -2,3 +2,4 @@
 /synapse_ai_cli.egg-info/
 __pycache__/
 /.envrc
+.synapse/
