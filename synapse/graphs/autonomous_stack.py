@@ -24,7 +24,7 @@ import tempfile
 from typing import Any
 
 from langgraph.graph import END, StateGraph
-from langgraph.checkpoint.sqlite import SqliteSaver
+from langgraph.checkpoint.memory import MemorySaver
 from langgraph.types import Send
 
 from synapse.agents.architect  import architect_node
@@ -365,7 +365,13 @@ def build_autonomous_graph(
     builder.add_edge("summariser",        "apply_patches")
     builder.add_edge("apply_patches",     END)
 
-    checkpointer = SqliteSaver.from_conn_string(db_path)
+    if db_path == ":memory:":
+        checkpointer = MemorySaver()
+    else:
+        from langgraph.checkpoint.sqlite import SqliteSaver
+        import sqlite3
+        conn = sqlite3.connect(db_path, check_same_thread=False)
+        checkpointer = SqliteSaver(conn)
 
     return builder.compile(
         checkpointer=checkpointer,
