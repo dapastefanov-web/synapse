@@ -26,7 +26,6 @@ dependencies = [
     "python-dotenv>=1.0.0",
 ]
 
-# After `pip install -e .`, typing `synapse` in any terminal calls synapse/main.py -> app()
 [project.scripts]
 synapse = "synapse.main:app"
 
