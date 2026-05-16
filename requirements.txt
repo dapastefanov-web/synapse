@@ -1,7 +1,6 @@
 # --- Orchestration and LLM Routing ---
 litellm>=1.40.0           # Universal async LLM client — abstracts ZhipuAI, Groq, Moonshot, Together, NVIDIA NIM
 langgraph>=0.2.0         # DAG state machine with Send API, persistent checkpointing, and HITL pause mechanics
-langgraph-checkpoint-sqlite>=2.0.0
 langchain-core>=0.3.0     # Required base layer that LangGraph builds on top of
 
 # --- Data Validation ---
