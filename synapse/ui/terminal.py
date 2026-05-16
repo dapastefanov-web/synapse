@@ -77,7 +77,8 @@ class TerminalUI:
         console.print(f"[yellow]⚠[/yellow]  {message}")
 
     def error(self, message: str) -> None:
-        console.print(f"[red]✗[/red]  {message}", file=sys.stderr)
+        err_console = Console(stderr=True)
+        err_console.print(f"[red]✗[/red]  {message}")
 
     def rule(self, title: str = "") -> None:
         console.rule(f"[bold]{title}[/bold]" if title else "")
